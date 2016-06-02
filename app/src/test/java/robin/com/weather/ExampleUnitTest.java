@@ -9,7 +9,7 @@ import retrofit2.Call;
 import retrofit2.Response;
 import retrofit2.Retrofit;
 import robin.com.weather.api.LocationService;
-import robin.com.weather.api.RetrofitService;
+import robin.com.weather.service.RetrofitProvider;
 import robin.com.weather.model.location.Location;
 
 import static org.junit.Assert.assertEquals;
@@ -26,7 +26,7 @@ public class ExampleUnitTest {
 
     @Test // throw apikey by OkHttp
     public void testRetrofit() {
-        Retrofit retrofit =  RetrofitService.getInstance().getRetrofit();
+        Retrofit retrofit =  RetrofitProvider.getInstance().getRetrofit();
 
         LocationService locationService =  retrofit.create(LocationService.class);
         Call<List<Location>> call = locationService.findLocation("Strzyżów");

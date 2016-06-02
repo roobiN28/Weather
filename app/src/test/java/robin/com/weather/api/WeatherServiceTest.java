@@ -8,6 +8,7 @@ import java.util.List;
 import retrofit2.Call;
 import retrofit2.Response;
 import retrofit2.Retrofit;
+import robin.com.weather.service.RetrofitProvider;
 import robin.com.weather.model.weather.Weather;
 
 /**
@@ -17,7 +18,7 @@ public class WeatherServiceTest {
     WeatherService weatherService;
     @Before
     public void setUp() {
-        Retrofit retrofit =  RetrofitService.getInstance().getRetrofit();
+        Retrofit retrofit =  RetrofitProvider.getInstance().getRetrofit();
 
         weatherService =  retrofit.create(WeatherService.class);
 

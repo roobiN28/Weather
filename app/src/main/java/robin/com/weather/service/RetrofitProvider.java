@@ -1,4 +1,4 @@
-package robin.com.weather.api;
+package robin.com.weather.service;
 
 import java.io.IOException;
 
@@ -14,21 +14,21 @@ import retrofit2.converter.gson.GsonConverterFactory;
 /**
  * Created by Rober on 30.05.2016.
  */
-public class RetrofitService {
+public class RetrofitProvider {
 
 
 
-    private static RetrofitService instance = new RetrofitService();
+    private static RetrofitProvider instance = new RetrofitProvider();
 
-    public static RetrofitService getInstance() {
+    public static RetrofitProvider getInstance() {
         return instance;
     }
-    //LRmp6xL2GHnHzhYuflvauDfaYBol85hX
+
     private final String API_KEY = "LRmp6xL2GHnHzhYuflvauDfaYBol85hX";
     @Getter
     private Retrofit retrofit ;
 
-    private RetrofitService() {
+    private RetrofitProvider() {
 
         OkHttpClient client = new OkHttpClient.Builder().addInterceptor(new Interceptor() {
             @Override
