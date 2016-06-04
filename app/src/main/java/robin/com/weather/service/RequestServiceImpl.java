@@ -1,7 +1,6 @@
 package robin.com.weather.service;
 
 import android.util.Log;
-import android.widget.TextView;
 
 import com.squareup.otto.Bus;
 
@@ -15,9 +14,9 @@ import retrofit2.Retrofit;
 import robin.com.weather.api.LocationService;
 import robin.com.weather.api.WeatherService;
 import robin.com.weather.model.BusError;
+import robin.com.weather.model.BusLocation;
 import robin.com.weather.model.BusWeater;
 import robin.com.weather.model.location.Location;
-import robin.com.weather.model.BusLocation;
 import robin.com.weather.model.weather.Weather;
 
 /**
@@ -29,7 +28,7 @@ public class RequestServiceImpl implements RequestService{
     Retrofit retrofit = RetrofitProvider.getInstance().getRetrofit();
 
     @Override
-    public void localization(final String text, final TextView textView) {
+    public void localization(final String text) {
         LocationService locationService = retrofit.create(LocationService.class);
         Call<List<Location>> call = locationService.findLocation(text);
         call.enqueue(new Callback<List<robin.com.weather.model.location.Location>>() {
