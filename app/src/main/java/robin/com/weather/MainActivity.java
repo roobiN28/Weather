@@ -63,7 +63,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 String item = (String) listView.getItemAtPosition(position);
-                String key = item.split(" ")[0];
+                String key = item.split(", ")[0];
                 service.weather(key);
             }
         });
