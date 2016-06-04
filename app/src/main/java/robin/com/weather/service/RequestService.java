@@ -7,4 +7,5 @@ package robin.com.weather.service;
 public interface RequestService {
     public void localization(final String text);
     public void weather(String key);
+    public void bitmap(int weatherIconNumber);
 }

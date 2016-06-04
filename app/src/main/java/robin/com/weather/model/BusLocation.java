@@ -13,6 +13,7 @@ public class BusLocation {
     private String regionName;
     private String coutryName;
     private String administrativeArea;
+    private String nearBy;
 
     public BusLocation(Location location) {
         key = location.key;
@@ -20,6 +21,7 @@ public class BusLocation {
         regionName = location.region.localizedName;
         coutryName = location.country.localizedName;
         administrativeArea = location.administrativeArea.localizedName;
+        nearBy = location.supplementalAdminAreas.get(0).localizedName;
     }
 
 

@@ -1,11 +1,8 @@
 package robin.com.weather;
 
-import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -17,8 +14,6 @@ import android.widget.Toast;
 
 import com.squareup.otto.Bus;
 import com.squareup.otto.Subscribe;
-import com.squareup.picasso.Picasso;
-import com.squareup.picasso.Target;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -29,8 +24,9 @@ import retrofit2.Retrofit;
 import robin.com.weather.model.BusError;
 import robin.com.weather.model.BusLocation;
 import robin.com.weather.model.BusWeater;
-import robin.com.weather.parser.UrlParser;
+import robin.com.weather.model.BusWeatherBitmap;
 import robin.com.weather.service.BusProvider;
+import robin.com.weather.service.RequestService;
 import robin.com.weather.service.RequestServiceImpl;
 import robin.com.weather.service.RetrofitProvider;
 
@@ -38,6 +34,7 @@ import robin.com.weather.service.RetrofitProvider;
 public class MainActivity extends AppCompatActivity {
     private Bus bus = BusProvider.getInstance().getBus();
     Retrofit retrofit = RetrofitProvider.getInstance().getRetrofit();
+    RequestService service;
 
     @BindView(R.id.editTextCity) EditText miasto;
     @BindView(R.id.textViewTemperature) TextView textViewTemp;
@@ -45,7 +42,6 @@ public class MainActivity extends AppCompatActivity {
     @BindView(R.id.listaLokacji)  ListView listView;
     @BindView(R.id.buttonSubmit) Button submit;
 
-    RequestServiceImpl service = new RequestServiceImpl();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,6 +50,8 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
         bus.register(this);
+        service = new RequestServiceImpl(this);
+
         submit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick (View v) {
@@ -72,10 +70,10 @@ public class MainActivity extends AppCompatActivity {
     }
 
     @Subscribe
-    public void onLocationHandler(ArrayList<BusLocation> event) {
+    public void onLocationHEvent(ArrayList<BusLocation> event) {
         List<String> items = new ArrayList<>();
         for(BusLocation loc : event) {
-            items.add(loc.getKey()+ " " +loc.getCoutryName()+" "+loc.getAdministrativeArea()   );
+            items.add(loc.getKey()+ ", " +loc.getCoutryName()+", "+loc.getAdministrativeArea() +", " +loc.getNearBy());
         }
         ArrayAdapter<String> simpleAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_2, android.R.id.text2 ,items);
         listView.setAdapter(simpleAdapter);
@@ -84,29 +82,18 @@ public class MainActivity extends AppCompatActivity {
     public void onWeatherEvent(BusWeater weather) {
         textViewTemp.setText(weather.getTemperatureInCelcius().toString());
         textViewWeather.setText(weather.getWeatherText());
-        String path = new UrlParser().generateURL(weather.getWeatherIcon());
-        Log.d("TAG", path);
-        Picasso.with(getBaseContext()).load(path).into(new Target() {
-            @Override
-            public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
-                textViewWeather.setBackground(new BitmapDrawable(getApplicationContext().getResources(), bitmap));
-            }
+        service.bitmap(weather.getWeatherIcon());
 
-            @Override
-            public void onBitmapFailed(Drawable errorDrawable) {
-                Toast.makeText(getBaseContext(),"Nie udało się załadować",Toast.LENGTH_SHORT).show();
-            }
-
-            @Override
-            public void onPrepareLoad(Drawable placeHolderDrawable) {
-
-            }
-        });
+    }
+    @Subscribe
+    public void onBitmapEvent(BusWeatherBitmap busWeatherBitmap) {
+        textViewWeather.setBackground(new BitmapDrawable(getApplicationContext().getResources(), busWeatherBitmap.getBitmap()));
     }
     @Subscribe
     public void onRequstError(BusError error) {
         Toast.makeText(getApplicationContext(),error.getName(),Toast.LENGTH_SHORT);
     }
+
 
 
     @Override
